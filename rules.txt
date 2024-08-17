@@ -1,4 +1,4 @@
-# EXAMPLE RULES
+# EXAMPLE RULES test
 # dst src dstport srcport proto action
 
 192.168.8.0/0 192.168.2.0/24 0 0 0 DROP
