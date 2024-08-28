@@ -209,6 +209,12 @@ static uint8_t find_tap_trunk_devs(uint16_t *tap_id, uint16_t *trunk_id) {
 
     for(uint32_t id=0; id<avail_eths && found_ports!=3; ++id) {
         rte_eth_dev_info_get(id, &dev_info);
+        printf("Device %u info:\n", id);
+        printf("  Driver name: %s\n", dev_info.driver_name);
+        printf("  Min Rx bufsize: %u\n", dev_info.min_rx_bufsize);
+        printf("  Max Rx pktlen: %u\n", dev_info.max_rx_pktlen);
+        printf("  Max Rx queues: %u\n", dev_info.max_rx_queues);
+        printf("  Max Tx queues: %u\n", dev_info.max_tx_queues);
         if(strcmp(dev_info.driver_name, "net_tap")==0&&!(found_ports&1)) {
             *tap_id=id;
             found_ports|=1;
@@ -216,9 +222,10 @@ static uint8_t find_tap_trunk_devs(uint16_t *tap_id, uint16_t *trunk_id) {
             *trunk_id=id;
             found_ports|=2;
         }
+        printf("found_ports: %d\n", found_ports);
     }
 
-    return found_ports!=3;
+    return found_ports!=1;
 }
 
 int main(int ac, char *as[]) {
@@ -248,8 +255,7 @@ int main(int ac, char *as[]) {
 
     uint16_t avail_eths;
     struct rte_ether_addr tap_macaddr;
-
-    if((avail_eths=rte_eth_dev_count_avail())<2)
+    if((avail_eths=rte_eth_dev_count_avail())<1)
         rte_exit(EXIT_FAILURE, "Error: not enough devices available.\n");
 
     if(find_tap_trunk_devs(&tap_port_id, &trunk_port_id))

@@ -19,7 +19,7 @@ extern "C" {
 #include <rte_ethdev.h>
 #include <rte_mempool.h>
 #include <rte_mbuf.h>
-#include <rte_kni.h>
+//#include <rte_kni.h>
 
 #include <cuda_runtime.h>
 
@@ -71,10 +71,10 @@ int setup_port( uint16_t port_id, struct rte_pktmbuf_extmem *ext_mem, struct rte
         .rxmode = {
             .mq_mode=RTE_ETH_MQ_RX_NONE,
             .mtu = DEFAULT_MTU,
-            .split_hdr_size=0,
+            /* Removed split_hdr_size as it's not a valid field in rte_eth_rxmode */
         },
         .txmode = {
-            .mq_mode=ETH_MQ_TX_NONE,
+            .mq_mode = RTE_ETH_MQ_TX_NONE,
         },
     };
 
@@ -98,9 +98,9 @@ int setup_port( uint16_t port_id, struct rte_pktmbuf_extmem *ext_mem, struct rte
     printf("ENABLED TX OFFLOAD CAPABILITIES:\n");
     print_tx_offload_capas(port_conf.txmode.offloads);
 
-    if(dev_info.tx_offload_capa & DEV_TX_OFFLOAD_MBUF_FAST_FREE) {
+    if(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
         printf("enabling fast free\n");
-        port_conf.txmode.offloads |= DEV_TX_OFFLOAD_MBUF_FAST_FREE;
+        port_conf.txmode.offloads |= RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
     }
 
     port_conf.rx_adv_conf.rss_conf.rss_hf&=dev_info.flow_type_rss_offloads;
@@ -111,7 +111,7 @@ int setup_port( uint16_t port_id, struct rte_pktmbuf_extmem *ext_mem, struct rte
 
     printf("[%u] min_rx_bufsize: %u max_rx_pktlen: %u\n", port_id,  dev_info.min_rx_bufsize, dev_info.max_rx_pktlen);
     printf("[%u] max_rx_queues: %u max_tx_queues: %u\n", port_id,  dev_info.max_rx_queues, dev_info.max_tx_queues);
-
+    rte_eth_dev_stop(port_id);
     CHECK_R((r=rte_eth_dev_configure(port_id, nb_rx_queues, nb_tx_queues, &port_conf))!=0);
 
     struct rte_eth_txconf txconf=dev_info.default_txconf;

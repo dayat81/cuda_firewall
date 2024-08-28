@@ -4,3 +4,6 @@
 *.ptx
 *.cubin
 *.fatbin
+firewall
+rte_bv_classifier.o
+rte_bv.o

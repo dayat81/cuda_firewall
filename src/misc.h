@@ -15,7 +15,7 @@ extern "C" {
 #include <rte_ethdev.h>
 #include <rte_mempool.h>
 #include <rte_mbuf.h>
-#include <rte_kni.h>
+//#include <rte_kni.h>
 
 int setup_memory(struct rte_pktmbuf_extmem *ext_mem, struct rte_mempool **mpool_payload);
 int setup_port( uint16_t port_id, struct rte_pktmbuf_extmem *ext_mem, struct rte_mempool *mpool_payload,
